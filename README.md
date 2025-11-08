@@ -4,7 +4,7 @@ This is the data service application for the
 [CS 262 sample Monopoly project](https://github.com/calvin-cs262-organization/monopoly-project),
  which is deployed here:
 
-- <https://cs262-egbefbd4aae2h0df.canadacentral-01.azurewebsites.net><br>(This URL may vary from year to year.)
+- <https://cs262-practice-ddg0cdh8eqfaaubp.westus3-01.azurewebsites.net/><br> (Included for Hadeens lab 09!)
 
 Based on this URL, the service implements the following endpoints:
 
