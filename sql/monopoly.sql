@@ -67,9 +67,9 @@ GRANT SELECT ON PlayerProperty TO PUBLIC;
 INSERT INTO Game VALUES (1, '2025-10-26 19:00:00');
 INSERT INTO Game VALUES (2, '2025-10-25 20:30:00');
 
-INSERT INTO Player VALUES (1, 'hbs5@calvin.edu', 'Hadeens');
-INSERT INTO Player VALUES (2, 'king@gmail.edu', 'The King');
-INSERT INTO Player VALUES (3, 'dog@gmail.edu', 'Dogbreath');
+INSERT INTO Player (emailAddress, name) VALUES ('hbs5@calvin.edu', 'Hadeens');
+INSERT INTO Player (emailAddress, name) VALUES ('king@gmail.edu', 'The King');
+INSERT INTO Player (emailAddress, name) VALUES ('dog@gmail.edu', 'Dogbreath');
 
 INSERT INTO Property VALUES (1, 'Mediterranean Avenue', 'Brown', 60, 50, 50, 2, 10, 30, 90, 160, 250);
 INSERT INTO Property VALUES (2, 'Baltic Avenue', 'Brown', 60, 50, 50, 4, 20, 60, 180, 320, 450);
