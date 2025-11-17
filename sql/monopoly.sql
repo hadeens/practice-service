@@ -14,12 +14,12 @@ DROP TABLE IF EXISTS Player;
 
 -- Create the schema.
 CREATE TABLE Game (
-	ID integer PRIMARY KEY,
+	ID SERIAL PRIMARY KEY,
 	time timestamp
 	);
 
 CREATE TABLE Player (
-	ID integer PRIMARY KEY, 
+	ID SERIAL PRIMARY KEY, 
 	emailAddress varchar(50) NOT NULL,
 	name varchar(50)
 	);
@@ -34,7 +34,7 @@ CREATE TABLE PlayerGame (
 	);
 
 CREATE TABLE Property (
-    ID              integer PRIMARY KEY,
+    ID              SERIAL PRIMARY KEY,
     name            VARCHAR(50) NOT NULL,
     colorGroup      VARCHAR(20) NOT NULL,
     purchasePrice   integer,
