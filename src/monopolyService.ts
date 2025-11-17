@@ -68,6 +68,10 @@ router.put('/players/:id', updatePlayer);
 router.post('/players', createPlayer);
 router.delete('/players/:id', deletePlayer);
 
+router.get('/games', readGames);
+router.get('/games/:id', readGame);
+router.delete('/games/:id', deleteGame);
+
 // For testing only; vulnerable to SQL injection!
 // router.get('/bad/players/:id', readPlayerBad);
 
@@ -210,6 +214,59 @@ function deletePlayer(request: Request, response: Response, next: NextFunction):
         return t.none('DELETE FROM PlayerGame WHERE playerID=${id}', request.params)
             .then(() => {
                 return t.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', request.params);
+            });
+    })
+        .then((data: { id: number } | null): void => {
+            returnDataOr404(response, data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/** 
+ * Retrieves all games recorded in the database.
+*/
+function readGames(_request: Request, response: Response, next: NextFunction): void {
+    db.manyOrNone('SELECT * FROM Game')
+        .then((data: Player[]): void => {
+            // data is a list, never null, so returnDataOr404 isn't needed.
+            response.send(data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/**
+ * Retrieves a specific game by id.
+ */
+function readGame(request: Request, response: Response, next: NextFunction): void {
+        db.oneOrNone('SELECT * FROM Game WHERE id=${id}', request.params)
+        .then((data: Player | null): void => {
+            returnDataOr404(response, data);
+        })
+        .catch((error: Error): void => {
+            next(error);
+        });
+}
+
+/**
+ * This function deletes an existing player based on ID.
+ * 
+ * Deleting a game requires cascading deletion of PlayerGame PlayerProperty records first to
+ * maintain referential integrity. This function uses a transaction (`tx()`) to
+ * ensure that the PlayerGame, PlayerProperty, and Game records are deleted
+ * atomically (i.e., either both operations succeed or both fail together).
+ */
+function deleteGame(request: Request, response: Response, next: NextFunction): void {
+    db.tx((t) => {
+        return t.none('DELETE FROM PlayerGame WHERE gameID=${id}', request.params)
+            .then(() => {
+                return t.none('DELETE FROM PlayerProperty WHERE gameID=${id}', request.params);
+            })
+            .then(() => {
+                return t.oneOrNone('DELETE FROM Game WHERE id=${id} RETURNING id', request.params);
             });
     })
         .then((data: { id: number } | null): void => {
