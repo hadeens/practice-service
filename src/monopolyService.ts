@@ -242,16 +242,29 @@ function readGames(_request: Request, response: Response, next: NextFunction): v
 }
 
 /**
- * Retrieves a specific game by id.
+ * Retrieves a specific game by id and presents the players and their scores.
  */
 function readGame(request: Request, response: Response, next: NextFunction): void {
-        db.oneOrNone('SELECT * FROM Game WHERE id=${id}', request.params)
-        .then((data: Player | null): void => {
-            returnDataOr404(response, data);
-        })
-        .catch((error: Error): void => {
-            next(error);
-        });
+    db.task((t) => {
+        return t.oneOrNone('SELECT * FROM Game WHERE id=${id}', request.params)
+            .then((game) => {
+                if (game == null) {
+                    return { game: null, players: [] };
+                }
+                return t.manyOrNone(
+                    'SELECT p.id, p.name, p.emailaddress, pg.cash ' +
+                    'FROM PlayerGame pg JOIN Player p ON p.id = pg.playerid ' +
+                    'WHERE pg.gameid = ${id}',
+                    request.params
+                ).then((players) => ({ game, players }));
+            });
+    })
+    .then((data: { game: string | null; players: string[] }) => {
+        returnDataOr404(response, data)
+    })
+    .catch((error: Error): void => {
+        next(error);
+    });
 }
 
 /**
